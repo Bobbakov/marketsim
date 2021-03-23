@@ -7,4 +7,3 @@ def update_orderbook(order, orderbook):
     else:
         orderbook[side][price] += 1
     return orderbook
-

@@ -35,6 +35,8 @@ def show_orderbook():
         return orderbook
     if request.method == 'GET':
         # Show orderbook
+        print('GET Request made...')
+        print(f'Return orderbook: {orderbook}')
         return orderbook
 
 
