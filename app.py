@@ -10,12 +10,14 @@ counter = 1
 orderbook = {"B": {},
              "A": {}}
 
+
 # Get page counter
 @app.route('/', methods=['GET'])
 def show_counter():
     global counter
     counter +=1
     return jsonify(page_refresh_count=counter)
+
 
 # Orderbook
 @app.route('/orderbook', methods=['GET', 'POST'])
@@ -35,6 +37,7 @@ def show_orderbook():
         # Show orderbook
         return orderbook
 
+
 # Run application
 if __name__ == "__main__":
-   app.run(debug=True)
+    app.run(debug=True)
