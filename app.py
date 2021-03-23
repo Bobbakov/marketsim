@@ -29,6 +29,7 @@ def show_orderbook():
         print("Orderbook before update = {}".format(orderbook))
         orderbook = update_orderbook(content, orderbook)
         print("Orderbook after update = {}".format(orderbook))
+        print("Test")
         return orderbook
     if request.method == 'GET':
         # Get orderbook
