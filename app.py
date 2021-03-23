@@ -1,16 +1,17 @@
+# Import libraries
 from flask import Flask, request, render_template, jsonify
 from functions import update_orderbook
+
+# Initialize app
 app = Flask(__name__)
 
-# Initialize view counter
+# Initialize variables
 counter = 1
-
-# Initialize orderbook
 orderbook = {"B": {},
              "A": {}}
 
-# Page counter
-@app.route('/counter', methods=['GET'])
+# Get page counter
+@app.route('/', methods=['GET'])
 def show_counter():
     global counter
     counter +=1
@@ -23,17 +24,17 @@ def show_orderbook():
     global orderbook
     counter +=1
     if request.method == 'POST':
-        # Send order to orderbook
-        content = request.get_json(force=True)
-        print("Incoming order = {}".format(content))
+        # Process incoming order
+        order = request.get_json(force=True)
+        print("Incoming order = {}".format(order))
         print("Orderbook before update = {}".format(orderbook))
-        orderbook = update_orderbook(content, orderbook)
+        orderbook = update_orderbook(order, orderbook)
         print("Orderbook after update = {}".format(orderbook))
-        print("Test")
         return orderbook
     if request.method == 'GET':
-        # Get orderbook
+        # Show orderbook
         return orderbook
 
+# Run application
 if __name__ == "__main__":
-    app.run(debug=True)
+   app.run(debug=True)
