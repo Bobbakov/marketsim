@@ -20,6 +20,7 @@ class OrderBook(object):
     def __init__(self, tick_size=5):
         self.bids = {}
         self.asks = {}
+        self.trades = {}
         self.tick_size = tick_size
 
     def get_json_order_book(self):
@@ -38,14 +39,14 @@ class OrderBook(object):
 
     def add_bid_order(self, json_order):
         order = json_to_limit_order(json_order)
-        price_str = str(order.price)
+        price_str = order.price
         if price_str in self.bids:
             self.bids[price_str].append(order)
         else:
             self.bids[price_str] = [order]
 
     def remove_bid_order(self, order):
-        order_price = str(order.price)
+        order_price = order.price
         order_id = order.order_id
         for i, o in enumerate(self.bids[order_price]):
             if o.order_id == order_id:
@@ -54,14 +55,14 @@ class OrderBook(object):
 
     def add_ask_order(self, json_order):
         order = json_to_limit_order(json_order)
-        price_str = str(order.price)
+        price_str = order.price
         if price_str in self.asks:
             self.asks[price_str].append(order)
         else:
             self.asks[price_str] = [order]
 
     def remove_ask_order(self, order):
-        order_price = str(order.price)
+        order_price = order.price
         order_id = order.order_id
         for i, o in enumerate(self.asks[order_price]):
             if o.order_id == order_id:
