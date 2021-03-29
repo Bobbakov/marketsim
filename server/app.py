@@ -27,6 +27,8 @@ def return_order_book():
     # return order book to client
     print('GET Request made...')
     print(f'Return order book: {order_book.get_json_order_book()}')
+    print('Raw Asks:', order_book.asks)
+    print('Raw Bids:', order_book.bids)
     return order_book.get_json_order_book()
 
 
