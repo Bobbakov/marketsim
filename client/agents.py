@@ -25,13 +25,13 @@ class Agent(object):
         self.order_book_history.append(current_order_book)
 
     def send_random_order(self):
-        side_choices = ["B", "A"]
+        side_choices = ["Buy", "Sell"]
         price_choices = np.arange(1, 10)
         qty_choices = np.arange(1, 10)
         side = random.choice(side_choices)
         price = np.random.choice(price_choices)
         qty = np.random.choice(qty_choices)
-        data = {"side": side, "qty": str(qty), "price": str(price)}
+        data = {"side": side, "quantity": str(qty), "price": str(price)}
         print(f'[{self.agent_id}][ORDER] Sending order to Server for side {side} and price {price}.')
         requests.post(self.send_order_endpoint, json.dumps(data))
 

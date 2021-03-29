@@ -12,7 +12,7 @@ class order(object):
     activeOrders = []
     activeBuyOrders = []
     activeSellOrders = []
-    historyIntialOrder = []
+    historyIntialOrder = {}
 
     # Initialize order
     def __init__(self, side, price, quantity):
