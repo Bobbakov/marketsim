@@ -1,14 +1,13 @@
 # Import libraries
 from flask import Flask, request, jsonify
-from server.orderbook import OrderBook
-from server.handle_posts import handle_order_request
+from server.market import Market
 
 # Initialize app
 app = Flask(__name__)
 
 # Initialize variables
 counter = 1
-order_book = OrderBook()  # keep global order book in memory
+market = Market()  # keep global order book in memory
 
 
 # POSTS
