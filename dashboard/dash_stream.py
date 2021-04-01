@@ -6,17 +6,28 @@ from plotly.subplots import make_subplots
 
 import plotly.graph_objs as go
 import requests
-import numpy as np
 import pandas as pd
 
 
 BASE_ENDPOINT = "http://127.0.0.1:5000/"
 ORDER_BOOK_ENDPOINT = BASE_ENDPOINT + "orderbook"
+TRADES_ENDPOINT = BASE_ENDPOINT + 'trades'
 
 
 def get_current_orderbook(endpoint):
     current_order_book = requests.get(endpoint).json()
     return current_order_book
+
+
+def get_trades(endpoint):
+    trades = requests.get(endpoint).json()
+    return trades
+
+
+def json_to_trades(trades_json):
+    cols = ['TradeID', 'TradeTime', 'Price', 'Qty', 'BuyerMaker']
+    trades = pd.DataFrame(trades_json['Trades'], columns=cols)
+    return trades
 
 
 def orderbook_to_scatter(orderbook_json):
@@ -49,8 +60,9 @@ def orderbook_to_density(orderbook_json):
 
     y = bids_qty + asks_qty
     x = bids_price + asks_price
+    c = ['Green' for i in bids_price] + ['Red' for i in asks_price]
 
-    return x, y
+    return x, y, c
 
 
 app = dash.Dash(__name__)
@@ -70,13 +82,19 @@ def update_graph_scatter(n):
 
     orderbook = get_current_orderbook(ORDER_BOOK_ENDPOINT)
     x_scatter, y_scatter, c_scatter = orderbook_to_scatter(orderbook)
-    x_density, y_density = orderbook_to_density(orderbook)
+    x_density, y_density, c_density = orderbook_to_density(orderbook)
 
-    title = 'LOB'
+    trades_json = get_trades(TRADES_ENDPOINT)
+    trades = json_to_trades(trades_json)
+    print(trades)
 
-    fig = make_subplots(rows=2,
+
+    fig = make_subplots(rows=3,
                         cols=1,
-                        subplot_titles=("LOB - Scatter", "LOB - Density")
+                        subplot_titles=("LOB - Scatter", "LOB - Density", 'Trades'),
+                        specs=[[{"type": "scatter"}],
+                               [{"type": "scatter"}],
+                               [{"type": "table"}]]
                         )
 
     fig.append_trace(go.Scatter(x=x_scatter,
@@ -87,7 +105,8 @@ def update_graph_scatter(n):
                      col=1
                      )
     fig.append_trace(go.Scatter(x=list(x_density),
-                                y=list(y_density)),
+                                y=list(y_density),
+                                marker={'color': c_density}),
                      row=2,
                      col=1
                      )
@@ -95,7 +114,19 @@ def update_graph_scatter(n):
     fig.update_traces(mode='markers', marker_line_width=2, marker_size=10)
     fig.update_xaxes(title_text='Price')
     fig.update_yaxes(title_text='Quantity')
-    fig.update_layout(height=700, showlegend=False)
+
+    fig.append_trace(go.Table(header=dict(values=trades.columns),
+                              cells=dict(values=[list(trades[trades.columns[0]]),
+                                                 list(trades[trades.columns[1]]),
+                                                 list(trades[trades.columns[2]]),
+                                                 list(trades[trades.columns[3]]),
+                                                 list(trades[trades.columns[4]])
+                                                 ])),
+                     row=3,
+                     col=1
+                     )
+
+    fig.update_layout(height=1400, showlegend=False)
     return fig
 
 

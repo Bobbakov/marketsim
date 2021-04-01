@@ -1,6 +1,7 @@
 # Import libraries
 from flask import Flask, request, jsonify
 from server.order import order
+from server.transaction import transaction
 
 # Initialize app
 app = Flask(__name__)
@@ -15,6 +16,11 @@ def get_active_orders():
     return {'Asks': asks, 'Bids': bids}
 
 
+def get_trades():
+    trades = transaction.historyList
+    return {'Trades': trades}
+
+
 # POSTS
 @app.route('/submit_order', methods=['POST'])
 def submit_order():
@@ -25,6 +31,7 @@ def submit_order():
     price = float(json_order['price'])
     quantity = float(json_order['quantity'])
     order(side, price, quantity)
+    print(transaction.historyList)
     return 'Posted Order.'
 
 
@@ -32,8 +39,15 @@ def submit_order():
 @app.route('/orderbook', methods=['GET'])
 def return_order_book():
     # return order book to client
-    print('GET Request made...')
+    print('GET ORDERBOOK Request made...')
     return get_active_orders()
+
+
+@app.route('/trades', methods=['GET'])
+def return_trades():
+    # return order book to client
+    print('GET TRADES Request made...')
+    return get_trades()
 
 
 # Run application

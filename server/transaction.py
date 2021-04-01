@@ -1,71 +1,75 @@
 import itertools
+import time
 
 
 class transaction(object):
     counter = itertools.count()
-    history = {}
-    historyList = {}
+    history = []
+    historyList = []
     historyMarketAgent = {}
 
     # Initialize transaction
     def __init__(self, buyOrder, sellOrder, price, quantity):
-        market.transaction_counter += 1
-        self.id = market.transaction_counter
+        self.id = 'T' + str(time.time())
 
         # If transaction is buyer initiated --> take buyOrder.datetime == trade time.
         # Else --> take sellOrder.datetime
         self.datetime = max(buyOrder.datetime, sellOrder.datetime)
+        if buyOrder.datetime > sellOrder.datetime:
+            self.buy_maker = True
+        else:
+            self.buy_maker = False
         self.buyOrder = buyOrder
         self.sellOrder = sellOrder
         self.price = price
         self.quantity = quantity
 
-        # If first transaction by agent at market --> initialize values
-        if not market.id in buyOrder.agent.position.keys():
-            buyOrder.agent.position[market.id] = 0
-            buyOrder.agent.valueBought[market.id] = 0
-            buyOrder.agent.quantityBought[market.id] = 0
-            buyOrder.agent.valueSold[market.id] = 0
-            buyOrder.agent.quantitySold[market.id] = 0
-
-        if not market.id in sellOrder.agent.position.keys():
-            sellOrder.agent.position[market.id] = 0
-            sellOrder.agent.valueBought[market.id] = 0
-            sellOrder.agent.quantityBought[market.id] = 0
-            sellOrder.agent.valueSold[market.id] = 0
-            sellOrder.agent.quantitySold[market.id] = 0
-
-        if not market.id in transaction.history.keys():
-            transaction.history[market.id] = []
-            transaction.historyList[market.id] = []
-
-        if not (market.id, buyOrder.agent.name) in transaction.historyMarketAgent.keys():
-            transaction.historyMarketAgent[market.id, buyOrder.agent.name] = []
-
-        if not (market.id, sellOrder.agent.name) in transaction.historyMarketAgent.keys():
-            transaction.historyMarketAgent[market.id, sellOrder.agent.name] = []
-
-            # Update values agents at market
-        buyOrder.agent.position[market.id] += quantity
-        sellOrder.agent.position[market.id] -= quantity
-        buyOrder.agent.valueBought[market.id] += price * quantity
-        buyOrder.agent.quantityBought[market.id] += quantity
-        sellOrder.agent.valueSold[market.id] += price * quantity
-        sellOrder.agent.quantitySold[market.id] += quantity
+        # # If first transaction by agent at market --> initialize values
+        # if not market.id in buyOrder.agent.position.keys():
+        #     buyOrder.agent.position[market.id] = 0
+        #     buyOrder.agent.valueBought[market.id] = 0
+        #     buyOrder.agent.quantityBought[market.id] = 0
+        #     buyOrder.agent.valueSold[market.id] = 0
+        #     buyOrder.agent.quantitySold[market.id] = 0
+        #
+        # if not market.id in sellOrder.agent.position.keys():
+        #     sellOrder.agent.position[market.id] = 0
+        #     sellOrder.agent.valueBought[market.id] = 0
+        #     sellOrder.agent.quantityBought[market.id] = 0
+        #     sellOrder.agent.valueSold[market.id] = 0
+        #     sellOrder.agent.quantitySold[market.id] = 0
+        #
+        # if not market.id in transaction.history.keys():
+        #     transaction.history[market.id] = []
+        #     transaction.historyList[market.id] = []
+        #
+        # if not (market.id, buyOrder.agent.name) in transaction.historyMarketAgent.keys():
+        #     transaction.historyMarketAgent[market.id, buyOrder.agent.name] = []
+        #
+        # if not (market.id, sellOrder.agent.name) in transaction.historyMarketAgent.keys():
+        #     transaction.historyMarketAgent[market.id, sellOrder.agent.name] = []
+        #
+        #     # Update values agents at market
+        # buyOrder.agent.position[market.id] += quantity
+        # sellOrder.agent.position[market.id] -= quantity
+        # buyOrder.agent.valueBought[market.id] += price * quantity
+        # buyOrder.agent.quantityBought[market.id] += quantity
+        # sellOrder.agent.valueSold[market.id] += price * quantity
+        # sellOrder.agent.quantitySold[market.id] += quantity
 
         # Add to transaction history
-        transaction.history[market.id].append(self)
-        transaction.historyList[market.id].append([self.id, self.datetime.time(), self.price])
+        transaction.history.append(self)
+        transaction.historyList.append([self.id, self.datetime, self.price, self.quantity, self.buy_maker])
 
-        # Add to history agent at market
-        transaction.historyMarketAgent[market.id, buyOrder.agent.name].append([self.id,
-                                                                               buyOrder.agent.position[market.id],
-                                                                               transaction.calculateRprofit(
-                                                                                   buyOrder.agent, market)])
-        transaction.historyMarketAgent[market.id, sellOrder.agent.name].append([self.id,
-                                                                                sellOrder.agent.position[market.id],
-                                                                                transaction.calculateRprofit(
-                                                                                    sellOrder.agent, market)])
+        # # Add to history agent at market
+        # transaction.historyMarketAgent[market.id, buyOrder.agent.name].append([self.id,
+        #                                                                        buyOrder.agent.position[market.id],
+        #                                                                        transaction.calculateRprofit(
+        #                                                                            buyOrder.agent, market)])
+        # transaction.historyMarketAgent[market.id, sellOrder.agent.name].append([self.id,
+        #                                                                         sellOrder.agent.position[market.id],
+        #                                                                         transaction.calculateRprofit(
+        #                                                                             sellOrder.agent, market)])
 
     ### METHODS
     # Display transaction

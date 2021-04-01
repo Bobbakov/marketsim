@@ -1,7 +1,7 @@
 import itertools
 from datetime import datetime, timedelta
 import operator
-
+import time
 from .transaction import transaction
 
 
@@ -18,7 +18,7 @@ class order(object):
     def __init__(self, side, price, quantity):
         self.id = next(order.counter)
         order.datetimeCounter += timedelta(seconds=1)
-        self.datetime = order.datetimeCounter
+        self.datetime = time.asctime((time.localtime(time.time())))
         self.side = side
         price = float("%.2f" % (price))
         self.price = price
@@ -53,7 +53,7 @@ class order(object):
                             transactionQuantity = bestOffer.quantity
 
                             # Register transaction
-                            # transaction(self, bestOffer, transactionPrice, transactionQuantity)
+                            transaction(self, bestOffer, transactionPrice, transactionQuantity)
 
                             # Remove offer from orderbook
                             order.removeOffer(bestOffer)
@@ -66,8 +66,8 @@ class order(object):
                             transactionQuantity = bestOffer.quantity
 
                             # Register transaction
-                            # transaction(self, bestOffer, market, transactionPrice, transactionQuantity)
-
+                            transaction(self, bestOffer, transactionPrice, transactionQuantity)
+                            #
                             # Remove offer from orderbook
                             order.removeOffer(bestOffer)
 
@@ -79,7 +79,7 @@ class order(object):
                             transactionQuantity = remainingQuantity
 
                             # Register transaction
-                            # transaction(self, bestOffer, market, transactionPrice, transactionQuantity)
+                            transaction(self, bestOffer, transactionPrice, transactionQuantity)
 
                             # Reduce quantity offer
                             order.reduceOffer(bestOffer, transactionQuantity)
@@ -123,7 +123,7 @@ class order(object):
                             transactionQuantity = bestBid.quantity
 
                             # Register transaction
-                            # transaction(bestBid, self, market, transactionPrice, transactionQuantity)
+                            transaction(bestBid, self, transactionPrice, transactionQuantity)
 
                             # Remove bid from orderbook
                             order.removeBid(bestBid)
@@ -134,7 +134,7 @@ class order(object):
                             transactionQuantity = bestBid.quantity
 
                             # Register transaction
-                            # transaction(bestBid, self, market, transactionPrice, transactionQuantity)
+                            transaction(bestBid, self, transactionPrice, transactionQuantity)
 
                             # Remove best bid from orderbook
                             order.removeBid(bestBid)
@@ -147,7 +147,7 @@ class order(object):
                             transactionQuantity = remainingQuantity
 
                             # Register transaction
-                            # transaction(bestBid, self, market, transactionPrice, transactionQuantity)
+                            transaction(bestBid, self, transactionPrice, transactionQuantity)
 
                             # Reduce quantity best bid
                             order.reduceBid(bestBid, transactionQuantity)
