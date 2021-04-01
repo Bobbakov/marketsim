@@ -9,6 +9,12 @@ app = Flask(__name__)
 counter = 1
 
 
+def get_active_orders():
+    asks = [[o.price, o.quantity] for o in order.activeSellOrders]
+    bids = [[o.price, o.quantity] for o in order.activeBuyOrders]
+    return {'Asks': asks, 'Bids': bids}
+
+
 # POSTS
 @app.route('/submit_order', methods=['POST'])
 def submit_order():
@@ -27,10 +33,7 @@ def submit_order():
 def return_order_book():
     # return order book to client
     print('GET Request made...')
-    return {'history': len(order.history),
-            'active buy orders': len(order.activeBuyOrders),
-            'active sell orders':len(order.activeSellOrders)
-            }
+    return get_active_orders()
 
 
 # Run application
